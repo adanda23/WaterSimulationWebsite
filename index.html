@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Simulation Project - CSCI 5607</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>3D Water Simulation in OpenGL</h1>
+            <p class="subtitle">Abhiram Danda</p>
+        </header>
+
+        <section class="media-section">
+            <div class="video-container">
+                <video controls>
+                    <source src="FinalSubmission.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption">Video Demonstration</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Progress Description and Overview</h2>
+            <p>
+                The overall goal of my project was to have a relatively realistic looking 3D water simulation program running by the end that would also allow for me to tweak the parameters. For the most part, I did achieve this goal. The water moved in a realistic way, with waves that moved back and forth and fell off in height the same way waves do in real life. Using normal maps, I was also able to make the water look like actual running water, as well as having some depth by changing the color based on height.
+            </p>
+            <p>
+                However, one feature that I wish I had implemented that I didn't get to was having the water interact with objects. I wanted the ability to drop a ball in the water and have the water ripple out in a realistic way, as well as splash along the walls of its container. The main obstacle in getting this to work was just time, as I was more focused on being able to adjust parameters as well as making the water look real.
+            </p>
+        </section>
+
+        <section class="media-section">
+            <div class="image-grid">
+                <div class="image-item">
+                    <img src="image1.png" alt="Water simulation screenshot 1">
+                    <p class="caption">Wireframe view with no waves</p>
+                </div>
+                <div class="image-item">
+                    <img src="image2.png" alt="Water simulation screenshot 2">
+                    <p class="caption">Wireframe view with wave displacement</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Connection to Our Class</h2>
+            <p>
+                This project demonstrated various aspects of computer graphics that we discussed in class, but the main topics would be Lighting Models and Realtime Rendering. Using GLSL, I was able to have very deep control with the geometry while also having really good performance in OpenGL. The lighting model was heavily based off the Blinn-Phong lighting model while also having some more features to make the surface look more like water.
+            </p>
+        </section>
+
+        <section class="content-section">
+            <h2>Key Features</h2>
+            <p>
+                The water simulation had several features that work together to create the realistic effect. First, the wave system uses radial sine wave equations that propagate outward from spawn points. Each wave follows the equation h = A * sin(k * r - ω * t), where the wave number k and angular frequency ω are calculated based on wavelength and speed. This physics-based approach means that waves behave naturally, spreading out in circular patterns the same way ripples do in real water.
+            </p>
+            <p>
+                To make the waves look more realistic, I implemented amplitude falloff using an exponential falloff function. As waves travel farther from their origin point, their height decreases. This prevents waves from maintaining the same amplitude forever, which would look unnatural. The decay factor can be adjusted to control how quickly waves dissipate, and I used a combination of exponential decay and distance-based smoothstep functions to create smooth, realistic wave propagation.
+            </p>
+            <p>
+                The lighting and shading system is probably the most important part of making the water actually look like water. I based it on the Blinn-Phong lighting model but added several water-specific enhancements. The shader includes depth-based coloring, where shallow areas appear as light turquoise and deeper troughs show up as dark blue. This color gradient is calculated based on the Y-position of each fragment after wave displacement has been applied. I also added a foam effect to the wave peaks using smoothstep interpolation, which creates those white highlights you see on top of real waves.
+            </p>
+            <p>
+                For the water surface detail, I used animated normal maps that cycle through 120 frames at 30 FPS. The normal maps get blended with the geometrically calculated normals from the wave equation, adding fine surface detail that would be too expensive to compute directly in the vertex shader. This combination gives the water that realistic rippled texture that catches the light. The fragment shader also implements fresnel effects, where the water becomes more reflective at grazing angles, and a subsurface scattering approximation that makes shallow water appear to glow slightly when backlit.
+            </p>
+            <p>
+                The camera system uses spherical coordinates with an orbital controller, allowing me to rotate around the water surface and zoom in and out with the mouse scroll wheel. The mesh itself is a 50x50 resolution grid that gets displaced in the vertex shader based on the active waves, but you can change the resolution with the slider. I also built in an ImGui-based GUI that lets me adjust wave parameters like amplitude, wavelength, and speed in real-time, as well as toggle wireframe mode and monitor the framerate. Although it wasn't the most visually pleasing, it got the job done. This made it much easier to experiment with different wave settings and find parameters that looked good.
+            </p>
+        </section>
+
+        <section class="media-section">
+            <div class="image-grid">
+                <div class="image-item">
+                    <img src="image3.png" alt="Water simulation screenshot 3">
+                    <p class="caption">Regular view with wave displacement</p>
+                </div>
+                <div class="image-item">
+                    <img src="image4.png" alt="Water simulation screenshot 4">
+                    <p class="caption">Close up of Normal Mapping</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Resources Used</h2>
+            <p>
+                For implementing wave physics, I referred to several online resources about water simulation mathematics, but this article helped me understand the relationship between wavelength, frequency, and wave speed especially: <a href="https://plus.maths.org/content/give-us-wave" target="_blank">https://plus.maths.org/content/give-us-wave</a>
+            </p>
+            <p>
+                For the lighting model, I started with the Blinn-Phong implementation we covered in class and then looked up additional resources on rendering water specifically. This article helped explain what subsurface scattering was: <a href="https://therealmjp.github.io/posts/sss-intro/" target="_blank">https://therealmjp.github.io/posts/sss-intro/</a> The depth-based coloring idea came from just observing real water and noticing how wave troughs appear much darker than peaks. OpenGL documentation and LearnOpenGL tutorials were helpful for understanding how to properly blend the geometric normals with the normal map samples.
+            </p>
+            <p>
+                The project structure and build system were set up using CMake and a Makefile, which I've used in previous assignments. I used GLFW for window management, GLEW for OpenGL extension loading, GLM for all the vector and matrix math, and integrated ImGui for the parameter adjustment interface.
+            </p>
+        </section>
+
+        <section class="content-section">
+            <h2>Future Work</h2>
+            <p>
+                If I had more time to work on this project, the first thing I would add is object interaction with the water. I really wanted to implement a system where you could drop spheres or other objects into the water and have it generate realistic splash effects and ripples. This would involve adding collision detection between objects and the water surface, then spawning waves at the impact points with appropriate amplitude based on the object's velocity and mass. The physics for this wouldn't be too complicated since I already have the wave spawning system working, but getting the visual feedback to look right would take some experimentation.
+            </p>
+            <p>
+                Another feature I'd like to add is boundary collision for the waves. Right now the waves just propagate outward indefinitely until they decay, but it would be much more realistic if they reflected off the walls of the container. This would require detecting when a wave reaches the edge of the mesh and spawning a reflected wave with adjusted direction. The math for wave reflection gets complicated when waves hit at angles, so this would be a significant undertaking.
+            </p>
+            <p>
+                I also think the rendering could be improved with actual reflection and refraction. Currently the fresnel effect just adjusts specular intensity, but real water reflects the environment and refracts light passing through it. Implementing this properly would require rendering the scene to a texture from the water surface's perspective and then sampling that texture in the fragment shader. It would probably hurt performance though, so I'd need to optimize carefully or make it an optional high-quality mode.
+            </p>
+            <p>
+                Finally, it would be cool to add some interaction with the wave parameters through the GUI. I have controls for amplitude, wavelength, and speed, but I could add presets for different water types like ocean waves, pond ripples, or stormy conditions. I could also implement the ability to manually spawn waves by clicking on the water surface, which would make it more interactive and fun to play with. Overall, even though I didn't get everything done, I'm pretty happy with how the water looks and behaves given the time we had.
+            </p>
+        </section>
+
+        <footer>
+            <p>CSCI 5607 - Computer Graphics</p>
+        </footer>
+    </div>
+</body>
+</html>
